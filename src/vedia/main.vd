@@ -1,4 +1,4 @@
 create console @ system:stdio <>
 
-"Hello, world!" -> console
+"Beslenme vedia betik mi okuyodun?" -> console
 10 -> console
