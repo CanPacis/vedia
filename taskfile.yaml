@@ -1,0 +1,5 @@
+version: "3"
+
+tasks:
+  build-parser: deno compile -o ./src/parser/parser ./src/parser/parser.ts
+  build: go build -ldflags="-s -w" 

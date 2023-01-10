@@ -1,0 +1,4 @@
+create console @ system:stdio <>
+
+"Hello, world!" -> console
+10 -> console
