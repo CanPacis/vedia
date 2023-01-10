@@ -1,4 +1,6 @@
-# ![vedia](https://file+.vscode-resource.vscode-cdn.net/Users/muhammedalican/Documents/repos/vedia/vedia.jpg)Getting Started
+# ![vedia](./vedia.jpg)
+
+# Getting Started
 
 ## Requirements
 
