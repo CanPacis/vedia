@@ -1,4 +1,4 @@
-create console @ system:stdio <>
+stack console@system:stdio
 
-"Beslenme vedia betik mi okuyodun?" -> console
-10 -> console
+"Beslenme vedia betik mi okuyodun?"->console
+10->console

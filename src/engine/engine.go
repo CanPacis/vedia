@@ -262,10 +262,10 @@ func (e *Engine) GetIndeterminateValue(value interface{}) ([]memory.StackAtom, e
 			return []memory.StackAtom{0}, err
 		}
 
-		if identifier.Type == "string_literal" {
+		if identifier.Type == "string-literal" {
 			results := util.ToIntSlice(identifier.Value.Get)
 			return results, nil
-		} else if identifier.Type == "number_literal" {
+		} else if identifier.Type == "number-literal" {
 			resultIntermediate, err = strconv.Atoi(identifier.Value.Get)
 			result = memory.StackAtom(resultIntermediate)
 		} else {

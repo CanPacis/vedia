@@ -1,34 +1,37 @@
-// deno-lint-ignore-file no-explicit-any ban-types
+// @ts-nocheck because we are using nearley's generated grammar
 // Generated automatically by nearley, version 2.20.1
 // http://github.com/Hardmath123/nearley
 // Bypasses TS6133. Allow declared but unused functions.
-import n from "https://dev.jspm.io/nearley";
-const nearley = n as Nearley;
-
 function id(d: any[]): any {
   return d[0];
 }
-declare const comment: any;
-declare const number_literal: any;
-declare const string_literal: any;
-declare const identifier: any;
+declare var number_literal: any;
+declare var string_literal: any;
+declare var comment: any;
+declare var identifier: any;
 
 import m from "https://dev.jspm.io/moo";
 const moo = m as { compile: Function; keywords: Function };
-
 const lexer = moo.compile({
   ws: { match: /[ \t\n\r]+/, lineBreaks: true },
   at: "@",
-  pound: "#",
+  ampersand: "&",
   dash: "-",
   angle_left_brackets: "<",
   angle_right_brackets: ">",
   left_curly_brackets: "{",
   right_curly_brackets: "}",
+  left_square_brackets: "[",
+  right_square_brackets: "]",
   left_parens: "(",
   right_parens: ")",
   colon: ":",
+  dot: ".",
+  comma: ",",
   forward_slash: "/",
+  comment: {
+    match: /#(?:[^\n\\]|\\["\\ntbfr])*#/,
+  },
   string_literal: {
     match: /"(?:[^\n\\"]|\\["\\ntbfr])*"/,
     value: (s: string) => JSON.parse(s),
@@ -36,17 +39,26 @@ const lexer = moo.compile({
   number_literal: {
     match: /-?[0-9]+(?:\.[0-9]+)?/,
   },
-  comment: /\\.*\\/,
   identifier: {
     match: /[a-zA-Z_][a-zA-Z_0-9-]*/,
     type: moo.keywords({
       use: "use",
-      create: "create",
+      stack: "stack",
       for: "for",
       expose: "expose",
+      this: "this",
     }),
   },
 });
+
+import n from "https://dev.jspm.io/nearley";
+const nearley = n as Nearley;
+
+interface Nearley {
+  Parser: { new (grammar: any): any };
+  Grammar: { fromCompiled: (grammar: any) => any };
+  Rule: { new (): any };
+}
 
 interface NearleyToken {
   value: any;
@@ -138,53 +150,48 @@ const grammar: Grammar = {
       postprocess: id,
     },
     { name: "top_level_statements", symbols: ["value_push"], postprocess: id },
+    { name: "top_level_statements", symbols: ["value_pop"], postprocess: id },
     { name: "top_level_statements", symbols: ["stack_move"], postprocess: id },
     { name: "top_level_statements", symbols: ["for_loop"], postprocess: id },
+    { name: "top_level_statements", symbols: ["comment"], postprocess: id },
     {
-      name: "comment",
-      symbols: [lexer.has("comment") ? { type: "comment" } : comment],
+      name: "create_statement$ebnf$1$subexpression$1",
+      symbols: ["__", "slice_literal"],
+      postprocess: (d) => d[1],
     },
+    {
+      name: "create_statement$ebnf$1",
+      symbols: ["create_statement$ebnf$1$subexpression$1"],
+      postprocess: id,
+    },
+    { name: "create_statement$ebnf$1", symbols: [], postprocess: () => null },
     {
       name: "create_statement",
       symbols: [
-        { literal: "create" },
+        { literal: "stack" },
         "__",
         "identifier",
-        "__",
         { literal: "@" },
-        "__",
         "ident_or_member",
-        "__",
-        "header_define",
+        "create_statement$ebnf$1",
       ],
       postprocess: (d) => ({
         operation: "create-statement",
         name: d[2],
-        at: d[6],
-        header: d[8],
+        at: d[4],
+        header: d[5],
       }),
     },
     {
-      name: "header_define$ebnf$1",
-      symbols: ["string_literal"],
-      postprocess: id,
-    },
-    { name: "header_define$ebnf$1", symbols: [], postprocess: () => null },
-    {
-      name: "header_define",
-      symbols: [{ literal: "<" }, "header_define$ebnf$1", { literal: ">" }],
-      postprocess: (d) => d[1],
-    },
-    {
       name: "procedure_call$ebnf$1",
-      symbols: [{ literal: "#" }],
+      symbols: [{ literal: "&" }],
       postprocess: id,
     },
     { name: "procedure_call$ebnf$1", symbols: [], postprocess: () => null },
     {
       name: "procedure_call",
       symbols: [
-        "identifier",
+        "expression",
         { literal: "{" },
         "identifier",
         { literal: "}" },
@@ -197,6 +204,8 @@ const grammar: Grammar = {
         exhaustive: d[4] !== null,
       }),
     },
+    { name: "expression", symbols: ["identifier"] },
+    { name: "expression", symbols: ["dot_member_expression"] },
     { name: "procedure_definition$ebnf$1", symbols: [] },
     {
       name: "procedure_definition$ebnf$1$subexpression$1",
@@ -229,54 +238,68 @@ const grammar: Grammar = {
     },
     {
       name: "value_push",
-      symbols: [
-        "value",
-        "_",
-        { literal: "-" },
-        { literal: ">" },
-        "_",
-        "identifier",
-      ],
+      symbols: ["value", { literal: "-" }, { literal: ">" }, "identifier"],
       postprocess: (d) => ({
         operation: "value-push",
         value: d[0],
-        target: d[5],
+        target: d[3],
       }),
+    },
+    {
+      name: "value_pop",
+      symbols: [{ literal: "<" }, { literal: "-" }, "identifier"],
+      postprocess: (d) => ({ operation: "value-pop", target: d[2] }),
     },
     {
       name: "stack_move",
       symbols: [
         "identifier",
-        "_",
         { literal: "<" },
         { literal: "-" },
         { literal: ">" },
-        "_",
         "identifier",
       ],
       postprocess: (d) => ({
         operation: "stack-move",
         left: d[0],
-        right: d[6],
+        right: d[4],
       }),
     },
     {
       name: "for_loop",
-      symbols: [{ literal: "for" }, "_", "value", "_", "identifier"],
+      symbols: [
+        { literal: "for" },
+        "_",
+        "value",
+        "_",
+        "identifier",
+        { literal: "@" },
+        "identifier",
+      ],
       postprocess: (d) => ({
         operation: "for-loop",
         iteration: d[2],
         procedure: d[4],
+        at: d[6],
       }),
     },
     { name: "ident_or_member", symbols: ["identifier"], postprocess: id },
     {
       name: "ident_or_member",
-      symbols: ["member_expression"],
+      symbols: ["colon_member_expression"],
       postprocess: id,
     },
     {
-      name: "member_expression",
+      name: "dot_member_expression",
+      symbols: ["identifier", { literal: "." }, "identifier"],
+      postprocess: (d) => ({
+        operation: "member-expression",
+        left: d[0],
+        right: d[2],
+      }),
+    },
+    {
+      name: "colon_member_expression",
       symbols: ["identifier", { literal: ":" }, "identifier"],
       postprocess: (d) => ({
         operation: "member-expression",
@@ -284,9 +307,28 @@ const grammar: Grammar = {
         right: d[2],
       }),
     },
+    { name: "slice_literal$ebnf$1", symbols: ["slice_value"], postprocess: id },
+    { name: "slice_literal$ebnf$1", symbols: [], postprocess: () => null },
+    {
+      name: "slice_literal",
+      symbols: [{ literal: "[" }, "slice_literal$ebnf$1", { literal: "]" }],
+      postprocess: (d) => ({
+        type: "slice-literal",
+        line: d[0].line,
+        col: d[0].col,
+        values: d[1] || [],
+      }),
+    },
+    { name: "slice_value", symbols: ["value"], postprocess: (d) => [d[0]] },
+    {
+      name: "slice_value",
+      symbols: ["slice_value", "_", { literal: "," }, "_", "value"],
+      postprocess: (d) => [...d[0], d[4]],
+    },
     { name: "value", symbols: ["number_literal"], postprocess: id },
     { name: "value", symbols: ["string_literal"], postprocess: id },
     { name: "value", symbols: ["procedure_call"], postprocess: id },
+    { name: "value", symbols: ["identifier"], postprocess: id },
     {
       name: "number_literal",
       symbols: [
@@ -296,7 +338,7 @@ const grammar: Grammar = {
       ],
       postprocess: (d) => ({
         value: d[0].value,
-        type: "number_literal",
+        type: "number-literal",
         line: d[0].line,
         col: d[0].col,
       }),
@@ -312,8 +354,17 @@ const grammar: Grammar = {
         value: d.value,
         line: d.line,
         col: d.col,
-        type: "string_literal",
+        type: "string-literal",
       }),
+    },
+    {
+      name: "comment",
+      symbols: [
+        { literal: "#" },
+        "_",
+        lexer.has("comment") ? { type: "comment" } : comment,
+      ],
+      postprocess: () => null,
     },
     {
       name: "identifier",
@@ -323,6 +374,16 @@ const grammar: Grammar = {
         line: d.line,
         col: d.col,
         type: "identifier",
+      }),
+    },
+    {
+      name: "identifier",
+      symbols: [{ literal: "this" }],
+      postprocess: ([d]) => ({
+        value: d.value,
+        line: d.line,
+        col: d.col,
+        type: "this",
       }),
     },
     { name: "_$ebnf$1", symbols: [] },
@@ -343,15 +404,8 @@ const grammar: Grammar = {
   ParserStart: "main",
 };
 
-interface Nearley {
-  Parser: { new (grammar: any): any };
-  Grammar: { fromCompiled: (grammar: any) => any };
-  Rule: { new (): any };
-}
-
-const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-
 function parse(input: string) {
+  const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
   try {
     parser.feed(input);
     if (!parser.results[0]) {
