@@ -1,4 +1,4 @@
-![vedia](vedia.jpg)
+![vedia](image/vedia.jpg)
 
 > Sadece vedia betik okumayın, vedia betik yazın.
 
