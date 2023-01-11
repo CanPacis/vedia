@@ -57,7 +57,7 @@ stack your-stack-name@system:memory
 
 ### Push to/Pop from stacks
 
-After creating your stack you can push 32 bit integers to it using push operator:
+After creating your stack you can push 32 bit integers to it using the push operator:
 
 ```
 420->your-stack-name
@@ -69,9 +69,9 @@ Popping a value from stack is as simple:
 <-your-stack-name
 ```
 
-### Stack channels
-
 This operation is not an expression but a statement so it will not yield a value. Or maybe it should idk, I'll look into it later.
+
+### Stack channels
 
 To create a simple hello world application you need to write to a stack that uses a standard io channel:
 
@@ -142,10 +142,10 @@ add{your-stack} # adds the last 2 values of the stack and yields it
 
 ### Exhaustive procedures
 
-A procedure can be exhaustive meaning for every value it reads from its given stack it also removes it. That makes the exhaustive length procedure the same as the empty procedure. Exhaustive procedures are denoted with an octothorpe "#" character.
+A procedure can be exhaustive meaning for every value it reads from its given stack it also removes it. That makes the exhaustive length procedure the same as the empty procedure. Exhaustive procedures are denoted with an ampersand "&" character.
 
 ```
-len{your-stack}#
+len{your-stack}&
 ```
 
 ## For loops

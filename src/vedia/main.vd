@@ -1,4 +1,6 @@
-stack console@system:stdio
+# hello world #
+
+stack console@io:std
 
 "Beslenme vedia betik mi okuyodun?"->console
 10->console
