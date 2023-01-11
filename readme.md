@@ -40,9 +40,11 @@ Specify a target file and execute the runtime
 `./vedia main.vd`
 
 # The Language
+
 Vedia is a stack based language where you don't have any variables, any meaningful variables that is. Expressions can still yield a value and primitive literals do exist.
 
 ## Stacks
+
 ### Create stacks
 
 What you will start almost any program with is creating a stack where you will push or pop your values to or from. Every stack has a channel that they go to, so to create a generic variable in your memory you should create a stack at the memory channel:
@@ -85,13 +87,13 @@ Vedia has string literals that represent slices of 32 bit integers so you can pu
 
 This will write to the standard output, meaning your terminal.
 
-> Be sure not to use any space characters between your value and stack name. 
-value->stack ✅ 
-value -> stack ❌
+> Be sure not to use any space characters between your value and stack name.
+> value->stack ✅
+> value -> stack ❌
 
 ### Stack headers
 
-Another concept vedia has is stack headers that can store meta data that you or the runtime may need. On initilization, these values and the channel may be used in relation by the runtime engine. For instance creating a channel at `io:file` channel will require you to provide a filepath in the header. 
+Another concept vedia has is stack headers that can store meta data that you or the runtime may need. On initilization, these values and the channel may be used in relation by the runtime engine. For instance creating a channel at `io:file` channel will require you to provide a filepath in the header.
 
 Header notation is basically a slice that may contain expressions including primitive values.
 
@@ -110,7 +112,7 @@ file<->console
 
 ## Procedures
 
-Vedia has the core concept of function-like structures. Vedia procedures do NOT have any arguments but rather they are called upon a stack that they can use*. 
+Vedia has the core concept of function-like structures. Vedia procedures do NOT have any arguments but rather they are called upon a stack that they can use*.
 
 <sub>
 *: I am not sure about using the stack or its values inside a procedures, I haven't thought about it yet.
@@ -129,6 +131,7 @@ remove-values {
 ```
 
 ### Call procedures
+
 Vedia runtime provides a handful of builtin procedures that you can use to do artihmetic or stack manipulation. You can call a procedure like this:
 
 ```
@@ -138,6 +141,7 @@ add{your-stack} # adds the last 2 values of the stack and yields it
 ```
 
 ### Exhaustive procedures
+
 A procedure can be exhaustive meaning for every value it reads from its given stack it also removes it. That makes the exhaustive length procedure the same as the empty procedure. Exhaustive procedures are denoted with an octothorpe "#" character.
 
 ```
@@ -145,6 +149,7 @@ len{your-stack}#
 ```
 
 ## For loops
+
 To avoid repetetive tasks, I added a simple for loop mechanism. You basically provide a iteration value and point it to a procedure to run and provide a stack to call it upon.
 
 ```
@@ -152,6 +157,7 @@ for 10 your-procedure@your-stack
 ```
 
 ## Examples
+
 Let's write an example procedure that removes a given amount of value from the given stack.
 
 ```
@@ -195,15 +201,15 @@ stack server@net:http [8000, handle-connection]
 net.start{server}
 ```
 
-
 # Roadmap
 
 ## Syntax & Runtime
-* [ ] Comments
-* [ ] Member expression calls
+
+* [X] Comments
+* [X] Member expression calls
 * [ ] Memory scopes on procedure calls
 * [ ] Stack channel initialization
-* [x] Stack channel notification
+* [X] Stack channel notification
 
 ## Stack Channels
 

@@ -56,3 +56,11 @@ func StdIoNotifier(value []memory.StackAtom) bool {
 func FileIoNotifier(value []memory.StackAtom) bool {
 	return true
 }
+
+var Standard = map[string]Namespace{
+	"system": {
+		"memory": memory.StackChannel(8),
+		"stdio":  memory.StackChannel(16),
+		"fileio": memory.StackChannel(32),
+	},
+}

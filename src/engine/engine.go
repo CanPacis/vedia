@@ -33,13 +33,7 @@ func New() Engine {
 		At:     0,
 	}}
 	engine.Procedures = vedia.Lib()
-	engine.Namespaces = map[string]vedia.Namespace{
-		"system": {
-			"memory": memory.StackChannel(8),
-			"stdio":  memory.StackChannel(16),
-			"fileio": memory.StackChannel(32),
-		},
-	}
+	engine.Namespaces = vedia.Standard
 	engine.Notifiers = map[memory.StackChannel]func(values []memory.StackAtom) bool{
 		0:  vedia.NoopNotifier,
 		8:  vedia.MemoryNotifier,
