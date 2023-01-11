@@ -138,7 +138,7 @@ add{your-stack} # adds the last 2 values of the stack and yields it
 ```
 
 ### Exhaustive procedures
-A procedure can be exhaustive meaning for the every value it reads from its given stack it also removes it. That makes the exhaustive length procedure the same as the empty procedure. Exhaustive procedures are denoted with an octothorpe "#" character.
+A procedure can be exhaustive meaning for every value it reads from its given stack it also removes it. That makes the exhaustive length procedure the same as the empty procedure. Exhaustive procedures are denoted with an octothorpe "#" character.
 
 ```
 len{your-stack}#
@@ -151,7 +151,7 @@ To avoid repetetive tasks, I added a simple for loop mechanism. You basically pr
 for 10 your-procedure@your-stack
 ```
 
-### Example
+## Examples
 Let's write an example procedure that removes a given amount of value from the given stack.
 
 ```
@@ -177,6 +177,22 @@ stack main@system:memory
 
 remove{main}
 
+```
+
+A simple http server that will serve a static html (highly theoretical)
+
+```
+use net
+
+stack file@io:file ["index.html"]
+
+handle-connection {
+  file<->this
+}
+
+stack server@net:http [8000, handle-connection]
+
+net.start{server}
 ```
 
 
