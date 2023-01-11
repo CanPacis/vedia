@@ -137,7 +137,7 @@ Vedia runtime provides a handful of builtin procedures that you can use to do ar
 ```
 remove-values{your-stack}
 length{your-stack}
-add{your-stack} # adds the last 2 values of the stack and yields it
+add{your-stack} # adds the last 2 values of the stack and yields it #
 ```
 
 ### Exhaustive procedures
@@ -161,25 +161,25 @@ for 10 your-procedure@your-stack
 Let's write an example procedure that removes a given amount of value from the given stack.
 
 ```
-# Reads from bottom up.
+# Reads from bottom up. #
 
-# 3.
+# 3. #
 pop-value {
   <-this
 }
 
-# 2.
+# 2. #
 remove {
-  # let's read the last value and get rid of it and use a for loop to pop values from the stack
+  # let's read the last value and get rid of it and use a for loop to pop values from the stack #
   for read{this} pop-value@this
 }
 
-# 1.
+# 1. #
 stack main@system:memory
 "populate with random data"->main
-# Lets push the amount of data we want to remove to the stack itself
+# Lets push the amount of data we want to remove to the stack itself #
 
-3->main # remove three values, excluding this one
+3->main # remove three values, excluding this one #
 
 remove{main}
 
