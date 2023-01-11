@@ -1,3 +1,4 @@
+![vedia](vedia.jpg)
 # Getting Started
 
 ## Requirements
@@ -17,8 +18,6 @@ task build-parser
 task build
 ```
 
-
-
 Alternatively, you can compile without the taskfile tool
 
 First compile the parser
@@ -36,3 +35,27 @@ Specify a target file and execute the runtime
 `./vedia main.vd`
 
 # The Language
+
+### Stack Channels
+
+* [X] system:memory
+* [X] io:std
+* [X] io:file
+* [ ] net:http
+* [ ] net:socket
+* [ ] net:tcp
+
+### Standart Lib
+
+* [X] len
+* [X] empty
+* [ ] add
+* [ ] subtract
+* [ ] divide
+* [ ] multiply
+* [ ] modulo
+
+### Math Lib
+
+* [ ] exp
+* [ ] root
